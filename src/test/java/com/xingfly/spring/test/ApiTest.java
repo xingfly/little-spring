@@ -22,11 +22,8 @@ public class ApiTest {
         BeanDefinition beanDefinition = new BeanDefinition(UserService.class);
         beanFactory.registerBeanDefinition("userService", beanDefinition);
         // 获取一个通过createBean方法创建的Bean
-        UserService userService = (UserService) beanFactory.getBean("userService");
+        UserService userService = (UserService) beanFactory.getBean("userService","S");
         userService.hello();
-        // 第二次获取，从缓存中获取
-        UserService singletonUserService = (UserService) beanFactory.getBean("userService");
-        singletonUserService.hello();
 
     }
 }
