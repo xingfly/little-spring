@@ -8,21 +8,28 @@ package com.xingfly.spring.test.bean;
  */
 public class UserService {
 
-    private String name;
+    private String id;
 
-    public UserService(String name) {
-        this.name = name;
-    }
+    private UserDao userDao;
+
 
     public void hello() {
-        System.out.println("Hello：" + name);
+        System.out.println("Hello：" + userDao.getUserName(id));
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 }
