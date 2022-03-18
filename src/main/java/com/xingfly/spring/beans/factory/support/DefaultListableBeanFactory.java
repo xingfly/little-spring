@@ -1,7 +1,9 @@
 package com.xingfly.spring.beans.factory.support;
 
 import com.xingfly.spring.beans.BeansException;
+import com.xingfly.spring.beans.factory.ConfigurableListableBeanFactory;
 import com.xingfly.spring.beans.factory.config.BeanDefinition;
+import com.xingfly.spring.beans.factory.config.ConfigurableBeanFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +14,7 @@ import java.util.Map;
  * @author supers
  * 2022/3/17
  */
-public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory implements BeanDefinitionRegistry {
+public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory implements BeanDefinitionRegistry, ConfigurableListableBeanFactory {
     private final Map<String, BeanDefinition> beanDefinitions = new HashMap<>(16);
 
     /**
@@ -23,7 +25,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
      * @return BeanDefinition
      */
     @Override
-    protected BeanDefinition getBeanDefinition(String name) throws BeansException {
+    public BeanDefinition getBeanDefinition(String name) throws BeansException {
         BeanDefinition beanDefinition = beanDefinitions.get(name);
         if (beanDefinition == null) {
             throw new BeansException("No bean named " + name + " is defined");
@@ -31,8 +33,31 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         return beanDefinition;
     }
 
+    @Override
+    public boolean containsBeanDefinition(String beanName) {
+        return beanDefinitions.containsKey(beanName);
+    }
+
+    @Override
+    public <T> Map<String, T> getBeansOfType(Class<T> type) {
+        Map<String, T> result = new HashMap<>();
+        beanDefinitions.forEach((beanName, beanDefinition) -> {
+            Class clazz = beanDefinition.getBeanClass();
+            if (type.isAssignableFrom(clazz)) {
+                result.put(beanName, getBean(beanName, type));
+            }
+        });
+        return result;
+    }
+
+    @Override
+    public String[] getBeanDefinitionNames() {
+        return beanDefinitions.keySet().toArray(new String[0]);
+    }
+
     /**
      * 注册BeanDefinition到Bean定义注册表
+     *
      * @param beanName       beanName
      * @param beanDefinition beanDefinition
      */
@@ -40,4 +65,5 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
         this.beanDefinitions.put(beanName, beanDefinition);
     }
+
 }

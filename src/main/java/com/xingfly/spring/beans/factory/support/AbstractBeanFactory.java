@@ -35,6 +35,12 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         return doGetBean(name, args);
     }
 
+
+    @Override
+    public <T> T getBean(String name, Class<T> clazz) throws BeansException {
+        return (T) getBean(name);
+    }
+
     /**
      * 定义了获取Bean的流程，具体实现交由子类实现模板方法完成
      *

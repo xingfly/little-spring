@@ -1,14 +1,10 @@
 package com.xingfly.spring.test;
 
-import com.xingfly.spring.beans.BeansException;
-import com.xingfly.spring.beans.PropertyValue;
-import com.xingfly.spring.beans.PropertyValues;
-import com.xingfly.spring.beans.factory.config.BeanDefinition;
-import com.xingfly.spring.beans.factory.BeanFactory;
-import com.xingfly.spring.beans.factory.config.BeanReference;
 import com.xingfly.spring.beans.factory.support.DefaultListableBeanFactory;
-import com.xingfly.spring.test.bean.UserDao;
+import com.xingfly.spring.beans.factory.xml.XmlBeanDefinitionReader;
+import com.xingfly.spring.core.io.DefaultResourceLoader;
 import com.xingfly.spring.test.bean.UserService;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -18,21 +14,18 @@ import org.junit.Test;
  * 2022/3/17
  */
 public class ApiTest {
+
     @Test
     public void test() {
-        // 创建BeanFactory
+        // 1.初始化 BeanFactory
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
-        // 注册UserDao
-        beanFactory.registerBeanDefinition("userDao", new BeanDefinition(UserDao.class));
-        PropertyValues propertyValues = new PropertyValues();
-        propertyValues.addPropertyValue(new PropertyValue("id", "1"));
-        propertyValues.addPropertyValue(new PropertyValue("userDao", new BeanReference("userDao")));
 
-        // UserService注入Bean
-        BeanDefinition beanDefinition = new BeanDefinition(UserService.class, propertyValues);
-        beanFactory.registerBeanDefinition("userService", beanDefinition);
+        // 2. 读取配置文件&注册Bean定义
+        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
+        reader.loadBeanDefinitions("classpath:spring.xml");
 
-        UserService userService = (UserService) beanFactory.getBean("userService");
+        // 3. 获取Bean对象调用方法
+        UserService userService = beanFactory.getBean("userService", UserService.class);
         userService.hello();
 
     }

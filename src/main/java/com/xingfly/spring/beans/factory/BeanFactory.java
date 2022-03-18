@@ -1,10 +1,6 @@
 package com.xingfly.spring.beans.factory;
 
 import com.xingfly.spring.beans.BeansException;
-import com.xingfly.spring.beans.factory.config.BeanDefinition;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * BeanFactory
@@ -29,4 +25,13 @@ public interface BeanFactory {
      * @return bean
      */
     Object getBean(String name, Object... args) throws BeansException;
+
+    /**
+     * 获取Bean
+     *
+     * @param name  bean名称
+     * @param clazz 类型
+     * @return bean
+     */
+    <T> T getBean(String name, Class<T> clazz) throws BeansException;
 }
