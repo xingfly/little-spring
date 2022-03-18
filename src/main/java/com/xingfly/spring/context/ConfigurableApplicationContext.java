@@ -12,4 +12,14 @@ public interface ConfigurableApplicationContext extends ApplicationContext {
      * 刷新容器
      */
     void refresh();
+
+    /**
+     * 注册关闭钩子
+     */
+    void registerShutdownHook();
+
+    /**
+     * 关闭容器
+     */
+    void close();
 }

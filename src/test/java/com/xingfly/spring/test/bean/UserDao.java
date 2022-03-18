@@ -12,10 +12,16 @@ import java.util.Map;
 public class UserDao {
     private static Map<String, String> map = new HashMap<>();
 
-    static {
+    public void initData() {
+        System.out.println("执行：init-method");
         map.put("1", "xf");
         map.put("2", "fpf");
         map.put("3", "wl");
+    }
+
+    public void destroyDataMethod() {
+        System.out.println("执行：destroy-method");
+        map.clear();
     }
 
     public String getUserName(String id) {

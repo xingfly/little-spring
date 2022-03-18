@@ -15,7 +15,6 @@ import java.util.Map;
  * 留出模板方法交由子类具体实现
  * refreshBeanFactory() - 创建Bean工厂，加载、注册BeanDefinition
  *
- *
  * @author supers
  * 2022/3/18
  */
@@ -98,4 +97,22 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
     protected abstract ConfigurableListableBeanFactory getBeanFactory();
 
     protected abstract void refreshBeanFactory() throws BeansException;
+
+    /**
+     * 注册虚拟机关闭钩子
+     */
+    @Override
+    public void registerShutdownHook() {
+        // 关闭时执行close方法
+        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
+    }
+
+    /**
+     * 关闭方法，销毁单例对象
+     */
+    @Override
+    public void close() {
+        // 销毁实现了DisposableBean的单例Beans
+        getBeanFactory().destroySingletons();
+    }
 }

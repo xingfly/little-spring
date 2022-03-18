@@ -1,12 +1,15 @@
 package com.xingfly.spring.test.bean;
 
+import com.xingfly.spring.beans.factory.DisposableBean;
+import com.xingfly.spring.beans.factory.InitializingBean;
+
 /**
  * UserService
  *
  * @author supers
  * 2022/3/17
  */
-public class UserService {
+public class UserService implements InitializingBean, DisposableBean {
 
     private String id;
 
@@ -60,5 +63,15 @@ public class UserService {
                 ", company='" + company + '\'' +
                 ", location='" + location + '\'' +
                 '}';
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("执行：UserService.destroy");
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("执行：UserService.afterPropertiesSet");
     }
 }
