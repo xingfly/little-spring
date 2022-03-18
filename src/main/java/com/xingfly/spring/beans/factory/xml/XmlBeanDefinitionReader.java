@@ -35,7 +35,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
     @Override
     public void loadBeanDefinitions(Resource resource) throws BeansException {
         try {
+            // Java7语法糖 自动释放
             try (InputStream inputStream = resource.getInputStream()) {
+                // 获取资源的输入流后加载Bean定义（基于XML的实现方式）
                 doLoadBeanDefinitions(inputStream);
             }
         } catch (Exception e) {
@@ -58,9 +60,17 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         loadBeanDefinitions(resource);
     }
 
+    @Override
+    public void loadBeanDefinitions(String... locations) throws BeansException {
+        for (String location : locations) {
+            loadBeanDefinitions(location);
+        }
+    }
+
 
     /**
      * 通过解析XML注册BeanDefinition的具体实现
+     *
      * @param inputStream Resource InputStream
      */
     protected void doLoadBeanDefinitions(InputStream inputStream) throws ClassNotFoundException {

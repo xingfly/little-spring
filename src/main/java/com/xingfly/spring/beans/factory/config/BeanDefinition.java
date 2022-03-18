@@ -3,6 +3,7 @@ package com.xingfly.spring.beans.factory.config;
 import com.xingfly.spring.beans.PropertyValues;
 
 /**
+ * Bean定义
  * BeanDefinition
  *
  * @author supers

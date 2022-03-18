@@ -16,10 +16,23 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
     private final BeanDefinitionRegistry registry;
     private final ResourceLoader resourceLoader;
 
+    /**
+     * 构造函数
+     * 完成注册表和资源加载器的初始化
+     *
+     * @param registry 注册表
+     */
     public AbstractBeanDefinitionReader(BeanDefinitionRegistry registry) {
         this(registry, new DefaultResourceLoader());
     }
 
+    /**
+     * 构造函数
+     * 完成注册表和资源加载器的初始化
+     *
+     * @param registry       注册表
+     * @param resourceLoader 资源加载器
+     */
     public AbstractBeanDefinitionReader(BeanDefinitionRegistry registry, ResourceLoader resourceLoader) {
         this.registry = registry;
         this.resourceLoader = resourceLoader;

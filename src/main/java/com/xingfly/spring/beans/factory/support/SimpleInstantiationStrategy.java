@@ -7,6 +7,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
+ * 基于反射实现的实例化策略
  * SimpleInstantiationStrategy
  *
  * @author supers

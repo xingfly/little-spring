@@ -13,7 +13,7 @@ public class UserDao {
     private static Map<String, String> map = new HashMap<>();
 
     static {
-        map.put("1", "xingfly");
+        map.put("1", "xf");
         map.put("2", "fpf");
         map.put("3", "wl");
     }

@@ -3,13 +3,12 @@ package com.xingfly.spring.beans.factory.support;
 import com.xingfly.spring.beans.BeansException;
 import com.xingfly.spring.beans.factory.ConfigurableListableBeanFactory;
 import com.xingfly.spring.beans.factory.config.BeanDefinition;
-import com.xingfly.spring.beans.factory.config.ConfigurableBeanFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * DefaultListableBeanFactory
+ * 默认列表Bean工厂 - DefaultListableBeanFactory
  *
  * @author supers
  * 2022/3/17
@@ -31,6 +30,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             throw new BeansException("No bean named " + name + " is defined");
         }
         return beanDefinition;
+    }
+
+    @Override
+    public void preInstantiateSingletons() throws BeansException {
+        beanDefinitions.keySet().forEach(this::getBean);
     }
 
     @Override

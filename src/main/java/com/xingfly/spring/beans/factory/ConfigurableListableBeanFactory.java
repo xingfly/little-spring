@@ -3,6 +3,7 @@ package com.xingfly.spring.beans.factory;
 import com.xingfly.spring.beans.BeansException;
 import com.xingfly.spring.beans.factory.config.AutowireCapableBeanFactory;
 import com.xingfly.spring.beans.factory.config.BeanDefinition;
+import com.xingfly.spring.beans.factory.config.BeanPostProcessor;
 import com.xingfly.spring.beans.factory.config.ConfigurableBeanFactory;
 
 /**
@@ -16,4 +17,14 @@ public interface ConfigurableListableBeanFactory extends ListableBeanFactory, Au
      * 获取Bean定义
      */
     BeanDefinition getBeanDefinition(String beanName) throws BeansException;
+
+    /**
+     * 注册BeanPostProcessor
+     * */
+    void addBeanPostProcessor(BeanPostProcessor beanPostProcessor);
+
+    /**
+     * 提前实例化Bean单例们
+     */
+    void preInstantiateSingletons() throws BeansException;
 }

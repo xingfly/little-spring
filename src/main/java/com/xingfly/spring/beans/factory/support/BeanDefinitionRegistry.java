@@ -12,8 +12,8 @@ import com.xingfly.spring.beans.factory.config.BeanDefinition;
 public interface BeanDefinitionRegistry {
     /***
      * 注册Bean定义
-     * @param beanName
-     * @param beanDefinition
+     * @param beanName Bean名称
+     * @param beanDefinition Bean定义
      */
     void registerBeanDefinition(String beanName, BeanDefinition beanDefinition);
 

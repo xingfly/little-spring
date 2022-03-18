@@ -4,7 +4,9 @@ import cn.hutool.core.bean.BeanUtil;
 import com.xingfly.spring.beans.BeansException;
 import com.xingfly.spring.beans.PropertyValue;
 import com.xingfly.spring.beans.PropertyValues;
+import com.xingfly.spring.beans.factory.config.AutowireCapableBeanFactory;
 import com.xingfly.spring.beans.factory.config.BeanDefinition;
+import com.xingfly.spring.beans.factory.config.BeanPostProcessor;
 import com.xingfly.spring.beans.factory.config.BeanReference;
 
 import java.lang.reflect.Constructor;
@@ -16,8 +18,11 @@ import java.lang.reflect.Constructor;
  * @author supers
  * 2022/3/17
  */
-public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory {
+public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements AutowireCapableBeanFactory {
 
+    /**
+     * Bean实例化策略
+     */
     private InstantiationStrategy instantiationStrategy = new CglibSubclassingInstantiationStrategy();
 
     /***
@@ -34,12 +39,69 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             bean = createBeanInstance(beanDefinition, beanName, args);
             // 给Bean填充属性
             applyPropertyValues(beanName, bean, beanDefinition);
+            // 执行Bean的初始化方法和BeanPostProcessor的前置和后置处理方法
+            bean = initializeBean(beanName, bean, beanDefinition);
         } catch (Exception e) {
             e.printStackTrace();
         }
         // 添加到单例注册表中
         addSingleton(beanName, bean);
         return bean;
+    }
+
+    /**
+     * 初始化Bean涉及到的具体流程
+     * 调用初始化方法前和后执行BeanPostProcessors的前置处理方法和后置处理方法
+     *
+     * @param beanName       Bean名称
+     * @param bean           Bean
+     * @param beanDefinition Bean定义
+     * @return 初始化后的Bean
+     */
+    private Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
+        // 执行BeanPostProcessor Before前置处理
+        Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
+        // TODO 调用初始化方法
+        invokeInitMethods(beanName, wrappedBean, beanDefinition);
+        // 执行BeanPostProcessor After后置处理
+        wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
+        return wrappedBean;
+    }
+
+    @Override
+    public Object applyBeanPostProcessorsAfterInitialization(Object bean, String beanName) {
+        Object result = bean;
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            Object current = beanPostProcessor.postProcessAfterInitialization(result, beanName);
+            if (null == current) {
+                return result;
+            }
+            result = current;
+        }
+        return result;
+    }
+
+    /**
+     * 调用初始化方法
+     *
+     * @param beanName       Bean名称
+     * @param wrappedBean    Bean
+     * @param beanDefinition Bean定义
+     */
+    private void invokeInitMethods(String beanName, Object wrappedBean, BeanDefinition beanDefinition) {
+    }
+
+    @Override
+    public Object applyBeanPostProcessorsBeforeInitialization(Object bean, String beanName) {
+        Object result = bean;
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            Object current = beanPostProcessor.postProcessBeforeInitialization(result, beanName);
+            if (null == current) {
+                return result;
+            }
+            result = current;
+        }
+        return result;
     }
 
     /**
@@ -72,6 +134,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
     }
 
+    /***
+     * 创建Bean实例
+     * @param beanDefinition Bean定义
+     * @param beanName Bean名称
+     * @param args 构造参数列表
+     * @return Bean实例
+     */
     protected Object createBeanInstance(BeanDefinition beanDefinition, String beanName, Object[] args) {
         Constructor constructor = null;
         // 通过Bean定义获取Bean的类型

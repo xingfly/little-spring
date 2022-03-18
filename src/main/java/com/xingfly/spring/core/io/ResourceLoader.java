@@ -11,6 +11,12 @@ public interface ResourceLoader {
 
     String CLASS_PATH_PREFIX = "classpath:";
 
+    /**
+     * 将路径转换为资源
+     *
+     * @param location 路径
+     * @return 资源
+     */
     Resource getResource(String location);
 
 }

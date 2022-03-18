@@ -10,5 +10,10 @@ import java.io.InputStream;
  * 2022/3/18
  */
 public interface Resource {
+    /**
+     * 获取输入流
+     *
+     * @return 输入流
+     */
     InputStream getInputStream() throws Exception;
 }
