@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans>
 
-    <bean id="userDao" class="com.xingfly.spring.test.bean.UserDao" init-method="initData"
-          destroy-method="destroyDataMethod"/>
+    <bean id="proxyUserDao" class="com.xingfly.spring.test.bean.ProxyIUserDaoBeanFactory" scope="prototype"/>
 
-    <bean id="userService" class="com.xingfly.spring.test.bean.UserService">
+    <bean id="userService" class="com.xingfly.spring.test.bean.UserService" scope="prototype">
         <property name="id" value="1"/>
         <property name="location" value="河南"/>
         <property name="company" value="精灵"/>
-        <property name="userDao" ref="userDao"/>
+        <property name="userDao" ref="proxyUserDao"/>
     </bean>
 
 </beans>

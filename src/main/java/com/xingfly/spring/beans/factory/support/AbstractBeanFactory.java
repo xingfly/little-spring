@@ -1,7 +1,7 @@
 package com.xingfly.spring.beans.factory.support;
 
 import com.xingfly.spring.beans.BeansException;
-import com.xingfly.spring.beans.factory.BeanFactory;
+import com.xingfly.spring.beans.factory.FactoryBean;
 import com.xingfly.spring.beans.factory.config.BeanDefinition;
 import com.xingfly.spring.beans.factory.config.BeanPostProcessor;
 import com.xingfly.spring.beans.factory.config.ConfigurableBeanFactory;
@@ -16,7 +16,7 @@ import java.util.List;
  * @author supers
  * 2022/3/17
  */
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory {
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
     private final ClassLoader beanClassLoader = ClassUtil.getDefaultClassLoader();
 
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
@@ -90,13 +90,40 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
      * @return bean
      */
     protected <T> T doGetBean(String name, final Object[] args) {
-        Object bean = getSingleton(name);
-        if (bean != null) {
-            return (T) bean;
+        Object sharedInstance = getSingleton(name);
+        if (sharedInstance != null) {
+            // 检查当前实例是否是FactoryBean，如果不是直接返回Bean实例，如果是需要去调用FactoryBean的getObject()方法创建实例
+            return (T) getObjectForBeanInstance(sharedInstance, name);
         }
         BeanDefinition beanDefinition = getBeanDefinition(name);
-        // 模板方法，子类实现
-        return (T) createBean(name, beanDefinition, args);
+        // 模板方法，子类实现（创建Bean时会Check是否为单例模式，如果不是不加入缓存）
+        Object bean = createBean(name, beanDefinition, args);
+        // 检查当前实例是否是FactoryBean，如果不是直接返回Bean实例，如果是需要去调用FactoryBean的getObject()方法创建实例
+        return (T) getObjectForBeanInstance(bean, name);
+    }
+
+    /**
+     * getObject
+     * 情况一：如果不是FactoryBean直接返回实例
+     * 情况二：如果是FactoryBean则调用FactoryBean的getObject()方法
+     *
+     * @param beanInstance Bean实例
+     * @param beanName     BeanName
+     * @return Bean实例（根据条件返回情况一 or 情况二）
+     */
+    private Object getObjectForBeanInstance(Object beanInstance, String beanName) {
+        // 如果不是FactoryBean直接返回实例
+        if (!(beanInstance instanceof FactoryBean)) {
+            return beanInstance;
+        }
+        // 先查询FactoryBean创建的实例是否已经存在，存在直接返回（能查到说明创建的是单例Bean）
+        Object object = getCachedObjectForFactoryBean(beanName);
+        if (object == null) {
+            FactoryBean<?> factoryBean = (FactoryBean<?>) beanInstance;
+            // 如果查不到，将回去调用getObject方法创建实例
+            object = getObjectFromFactoryBean(factoryBean, beanName);
+        }
+        return object;
     }
 
     /**

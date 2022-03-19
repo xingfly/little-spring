@@ -7,6 +7,7 @@ import com.xingfly.spring.test.bean.UserService;
 import com.xingfly.spring.test.common.MyBeanFactoryPostProcessor;
 import com.xingfly.spring.test.common.MyBeanPostProcessor;
 import org.junit.Test;
+import org.openjdk.jol.info.ClassLayout;
 
 /**
  * ApiTest
@@ -24,11 +25,22 @@ public class ApiTest {
         context.registerShutdownHook();
 
         // 2. 获取Bean对象调用方法
-        UserService userService = context.getBean("userService", UserService.class);
-        userService.hello();
-        System.out.println("测试结果：" + userService);
-        System.out.println("ApplicationContextAware：" + userService.getApplicationContext());
-        System.out.println("BeanFactoryAware：" + userService.getBeanFactory());
+        UserService userService1 = context.getBean("userService", UserService.class);
+        UserService userService2 = context.getBean("userService", UserService.class);
+
+        // 3. 打印十六进制哈希
+        System.out.println(userService1 + " 十六进制哈希：" + Integer.toHexString(userService1.hashCode()));
+        System.out.println(userService2 + " 十六进制哈希：" + Integer.toHexString(userService2.hashCode()));
+
+    }
+
+    @Test
+    public void test_factory_bean() {
+        // 创建应用上下文
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        context.registerShutdownHook();
+        UserService userService1 = context.getBean("userService", UserService.class);
+        userService1.hello();
     }
 
 }

@@ -19,7 +19,7 @@ public class UserService implements InitializingBean, DisposableBean, BeanClassL
 
     private String location;
 
-    private UserDao userDao;
+    private IUserDao userDao;
 
     private ApplicationContext applicationContext;
     private BeanFactory beanFactory;
@@ -33,7 +33,7 @@ public class UserService implements InitializingBean, DisposableBean, BeanClassL
     }
 
     public void hello() {
-        System.out.println("Hello：" + userDao.getUserName(id));
+        System.out.println("Hello：" + userDao.queryUserName(id));
     }
 
     public String getId() {
@@ -44,11 +44,11 @@ public class UserService implements InitializingBean, DisposableBean, BeanClassL
         this.id = id;
     }
 
-    public UserDao getUserDao() {
+    public IUserDao getUserDao() {
         return userDao;
     }
 
-    public void setUserDao(UserDao userDao) {
+    public void setUserDao(IUserDao userDao) {
         this.userDao = userDao;
     }
 
