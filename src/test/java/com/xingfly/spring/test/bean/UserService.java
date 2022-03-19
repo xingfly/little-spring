@@ -1,7 +1,9 @@
 package com.xingfly.spring.test.bean;
 
-import com.xingfly.spring.beans.factory.DisposableBean;
-import com.xingfly.spring.beans.factory.InitializingBean;
+import com.xingfly.spring.beans.BeansException;
+import com.xingfly.spring.beans.factory.*;
+import com.xingfly.spring.context.ApplicationContext;
+import com.xingfly.spring.context.ApplicationContextAware;
 
 /**
  * UserService
@@ -9,7 +11,7 @@ import com.xingfly.spring.beans.factory.InitializingBean;
  * @author supers
  * 2022/3/17
  */
-public class UserService implements InitializingBean, DisposableBean {
+public class UserService implements InitializingBean, DisposableBean, BeanClassLoaderAware, ApplicationContextAware, BeanNameAware, BeanFactoryAware {
 
     private String id;
 
@@ -19,6 +21,16 @@ public class UserService implements InitializingBean, DisposableBean {
 
     private UserDao userDao;
 
+    private ApplicationContext applicationContext;
+    private BeanFactory beanFactory;
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public BeanFactory getBeanFactory() {
+        return beanFactory;
+    }
 
     public void hello() {
         System.out.println("Hello：" + userDao.getUserName(id));
@@ -73,5 +85,25 @@ public class UserService implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         System.out.println("执行：UserService.afterPropertiesSet");
+    }
+
+    @Override
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        System.out.println("ClassLoader：" + classLoader);
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
+    }
+
+    @Override
+    public void setBeanName(String beanName) {
+        System.out.println("BeanName：" + beanName);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 }

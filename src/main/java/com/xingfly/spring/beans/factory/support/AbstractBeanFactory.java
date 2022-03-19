@@ -5,6 +5,7 @@ import com.xingfly.spring.beans.factory.BeanFactory;
 import com.xingfly.spring.beans.factory.config.BeanDefinition;
 import com.xingfly.spring.beans.factory.config.BeanPostProcessor;
 import com.xingfly.spring.beans.factory.config.ConfigurableBeanFactory;
+import com.xingfly.spring.util.ClassUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
  * 2022/3/17
  */
 public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory {
+    private final ClassLoader beanClassLoader = ClassUtil.getDefaultClassLoader();
 
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
@@ -69,6 +71,15 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
      */
     public List<BeanPostProcessor> getBeanPostProcessors() {
         return this.beanPostProcessors;
+    }
+
+    /**
+     * 获取Bean类加载器
+     *
+     * @return 类加载器
+     */
+    public ClassLoader getBeanClassLoader() {
+        return this.beanClassLoader;
     }
 
     /**

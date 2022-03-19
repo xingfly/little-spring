@@ -5,8 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.xingfly.spring.beans.BeansException;
 import com.xingfly.spring.beans.PropertyValue;
 import com.xingfly.spring.beans.PropertyValues;
-import com.xingfly.spring.beans.factory.DisposableBean;
-import com.xingfly.spring.beans.factory.InitializingBean;
+import com.xingfly.spring.beans.factory.*;
 import com.xingfly.spring.beans.factory.config.AutowireCapableBeanFactory;
 import com.xingfly.spring.beans.factory.config.BeanDefinition;
 import com.xingfly.spring.beans.factory.config.BeanPostProcessor;
@@ -58,8 +57,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     /**
      * 注册实现了DisposableBean接口的Bean
      *
-     * @param beanName Bean名称
-     * @param bean Bean
+     * @param beanName       Bean名称
+     * @param bean           Bean
      * @param beanDefinition Bean定义
      */
     protected void registerDisposableBeanIfNecessary(String beanName, Object bean, BeanDefinition beanDefinition) {
@@ -79,6 +78,17 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      * @return 初始化后的Bean
      */
     private Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
+        if (bean instanceof Aware) {
+            if (bean instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) bean).setBeanFactory(this);
+            }
+            if (bean instanceof BeanClassLoaderAware) {
+                ((BeanClassLoaderAware) bean).setBeanClassLoader(getBeanClassLoader());
+            }
+            if (bean instanceof BeanNameAware) {
+                ((BeanNameAware) bean).setBeanName(beanName);
+            }
+        }
         // 执行BeanPostProcessor 前置处理
         Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
         // 调用初始化方法
