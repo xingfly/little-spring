@@ -1,13 +1,9 @@
 package com.xingfly.spring.test;
 
-import com.xingfly.spring.beans.factory.support.DefaultListableBeanFactory;
-import com.xingfly.spring.beans.factory.xml.XmlBeanDefinitionReader;
 import com.xingfly.spring.context.support.ClassPathXmlApplicationContext;
 import com.xingfly.spring.test.bean.UserService;
-import com.xingfly.spring.test.common.MyBeanFactoryPostProcessor;
-import com.xingfly.spring.test.common.MyBeanPostProcessor;
+import com.xingfly.spring.test.event.CustomEvent;
 import org.junit.Test;
-import org.openjdk.jol.info.ClassLayout;
 
 /**
  * ApiTest
@@ -41,6 +37,13 @@ public class ApiTest {
         context.registerShutdownHook();
         UserService userService1 = context.getBean("userService", UserService.class);
         userService1.hello();
+    }
+
+    @Test
+    public void test_event() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-event.xml");
+        applicationContext.publishEvent(new CustomEvent(applicationContext, 1L, "成功了！"));
+        applicationContext.registerShutdownHook();
     }
 
 }
