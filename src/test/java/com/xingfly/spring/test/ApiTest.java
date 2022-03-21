@@ -1,6 +1,8 @@
 package com.xingfly.spring.test;
 
+import com.xingfly.spring.context.support.AnnotationConfigApplicationContext;
 import com.xingfly.spring.context.support.ClassPathXmlApplicationContext;
+import com.xingfly.spring.test.bean.TestService;
 import com.xingfly.spring.test.bean.UserService;
 import com.xingfly.spring.test.event.CustomEvent;
 import org.junit.Test;
@@ -44,6 +46,15 @@ public class ApiTest {
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-event.xml");
         applicationContext.publishEvent(new CustomEvent(applicationContext, 1L, "成功了！"));
         applicationContext.registerShutdownHook();
+    }
+
+    @Test
+    public void test_annotated() {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("com.xingfly.spring.test");
+        context.publishEvent(new CustomEvent(context, 1L, "成功了！"));
+        context.registerShutdownHook();
+        TestService t = context.getBean("testService", TestService.class);
+        t.hello();
     }
 
 }

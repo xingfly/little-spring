@@ -2,12 +2,14 @@ package com.xingfly.spring.test.event;
 
 
 import com.xingfly.spring.context.support.ApplicationListener;
+import com.xingfly.spring.stereotype.Bean;
 
 import java.util.Date;
 
 /**
  * 自定义事件监听器
  */
+@Bean
 public class CustomEventListener implements ApplicationListener<CustomEvent> {
 
     @Override

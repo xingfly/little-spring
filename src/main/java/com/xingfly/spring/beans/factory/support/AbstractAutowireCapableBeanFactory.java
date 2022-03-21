@@ -1,6 +1,8 @@
 package com.xingfly.spring.beans.factory.support;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ReferenceUtil;
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.xingfly.spring.beans.BeansException;
 import com.xingfly.spring.beans.PropertyValue;
@@ -177,6 +179,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 if (value instanceof BeanReference) {
                     // A依赖B，获取B的实例化
                     BeanReference beanReference = (BeanReference) value;
+                    // 字段的实际名称
+                    name = beanReference.getFieldName();
                     // AbstractBeanFactory的模板方法getBean（走流程，子类有具体的实现）
                     value = getBean(beanReference.getBeanName());
                 }
