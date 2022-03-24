@@ -3,13 +3,15 @@ package com.xingfly.spring.aop;
 import org.aopalliance.intercept.MethodInterceptor;
 
 /**
- * 切面通知 - AdvisedSupport
+ * 切面支持对象 - AdvisedSupport
  * 将代理、拦截、匹配包装到一起
  *
  * @author supers
  * 2022/3/22
  */
 public class AdvisedSupport {
+    // ProxyConfig
+    private boolean proxyTargetClass = false;
     // 代理对象
     private TargetSource targetSource;
     // 方法拦截器
@@ -40,4 +42,14 @@ public class AdvisedSupport {
     public void setMethodMatcher(MethodMatcher methodMatcher) {
         this.methodMatcher = methodMatcher;
     }
+
+    public boolean isProxyTargetClass() {
+        return proxyTargetClass;
+    }
+
+    public void setProxyTargetClass(boolean proxyTargetClass) {
+        this.proxyTargetClass = proxyTargetClass;
+    }
+
+
 }

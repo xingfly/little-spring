@@ -1,4 +1,4 @@
-package com.xingfly.spring.aop.springframework;
+package com.xingfly.spring.aop.framework;
 
 
 import org.aopalliance.intercept.MethodInvocation;
@@ -7,6 +7,7 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 
 /**
+ * 实现MethodInvocation接口，属于子类，包装方法然后调用。
  * ReflectiveMethodInvocation
  *
  * @author supers

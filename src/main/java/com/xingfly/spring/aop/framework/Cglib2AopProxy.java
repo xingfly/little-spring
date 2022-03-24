@@ -1,10 +1,9 @@
-package com.xingfly.spring.aop.springframework;
+package com.xingfly.spring.aop.framework;
 
 import com.xingfly.spring.aop.AdvisedSupport;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import org.aopalliance.intercept.MethodInvocation;
 
 import java.lang.reflect.Method;
 
@@ -15,6 +14,7 @@ import java.lang.reflect.Method;
  * 2022/3/22
  */
 public class Cglib2AopProxy implements AopProxy {
+    // 切面支持对象
     private final AdvisedSupport advised;
 
     public Cglib2AopProxy(AdvisedSupport advised) {
@@ -31,20 +31,24 @@ public class Cglib2AopProxy implements AopProxy {
     }
 
     private static class DynamicAdvisedInterceptor implements MethodInterceptor {
+        // 切面支持对象
         private final AdvisedSupport advised;
 
+        // 构造器传入切面支持对象
         public DynamicAdvisedInterceptor(AdvisedSupport advised) {
             this.advised = advised;
         }
 
         @Override
         public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-            // cglib方法执行
+            // cglib方法执行 包装对象
             CglibMethodInvocation methodInvocation = new CglibMethodInvocation(advised.getTargetSource().getTarget(), method, objects, methodProxy);
             // 判断切面通知 判断方法是否匹配
             if (advised.getMethodMatcher().matches(method, advised.getTargetSource().getClass())) {
                 // 调用拦截器的invoke方法
-                return advised.getMethodInterceptor().invoke(methodInvocation);
+                org.aopalliance.intercept.MethodInterceptor methodInterceptor = advised.getMethodInterceptor();
+                // 调用MethodBeforeAdviceInterceptor中的invoke方法，该类会调用MethodBeforeAdvice的before方法，然后调用代理对象的实际方法，完成前置增强
+                return methodInterceptor.invoke(methodInvocation);
             }
             // 匹配不上调用代理方法执行
             return methodInvocation.proceed();

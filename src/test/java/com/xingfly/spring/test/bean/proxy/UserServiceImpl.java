@@ -19,12 +19,4 @@ public class UserServiceImpl implements IUserService {
         return "S，1，成都";
     }
 
-    public String register(String userName) {
-        try {
-            Thread.sleep(new Random(1).nextInt(100));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return "注册用户：" + userName + " 成功！";
-    }
 }

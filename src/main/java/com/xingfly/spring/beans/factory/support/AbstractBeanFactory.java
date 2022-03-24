@@ -90,6 +90,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
      * @return bean
      */
     protected <T> T doGetBean(String name, final Object[] args) {
+        // 是否存在单例Bean
         Object sharedInstance = getSingleton(name);
         if (sharedInstance != null) {
             // 检查当前实例是否是FactoryBean，如果不是直接返回Bean实例，如果是需要去调用FactoryBean的getObject()方法创建实例

@@ -1,4 +1,4 @@
-package com.xingfly.spring.aop.springframework;
+package com.xingfly.spring.aop.framework;
 
 import com.xingfly.spring.aop.AdvisedSupport;
 import org.aopalliance.intercept.MethodInterceptor;

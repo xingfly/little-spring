@@ -6,10 +6,7 @@ import com.xingfly.spring.beans.BeansException;
 import com.xingfly.spring.beans.PropertyValue;
 import com.xingfly.spring.beans.PropertyValues;
 import com.xingfly.spring.beans.factory.*;
-import com.xingfly.spring.beans.factory.config.AutowireCapableBeanFactory;
-import com.xingfly.spring.beans.factory.config.BeanDefinition;
-import com.xingfly.spring.beans.factory.config.BeanPostProcessor;
-import com.xingfly.spring.beans.factory.config.BeanReference;
+import com.xingfly.spring.beans.factory.config.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -38,6 +35,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     protected Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) throws BeansException {
         Object bean = null;
         try {
+            // 判断是否返回代理Bean对象
+            bean = resolveBeforeInstantiation(beanName, beanDefinition);
+            if (null != bean) {
+                return bean;
+            }
             // 实例化Bean
             bean = createBeanInstance(beanDefinition, beanName, args);
             // 给Bean填充属性
@@ -54,6 +56,35 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             addSingleton(beanName, bean);
         }
         return bean;
+    }
+
+    /**
+     * 是否能从ProxyFactory中获取代理
+     *
+     * @param beanName       Bean名称
+     * @param beanDefinition Bean定义
+     * @return 代理Bean实例
+     */
+    protected Object resolveBeforeInstantiation(String beanName, BeanDefinition beanDefinition) {
+        // 判断是否返回代理Bean对象
+        Object bean = applyBeanPostProcessorsBeforeInstantiation(beanDefinition.getBeanClass(), beanName);
+        if (null != bean) {
+            // 如果代理对象不为空，执行BeanPostProcessors的后置处理方法
+            bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
+        }
+        return bean;
+    }
+
+    protected Object applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName) {
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            // 找到实现了InstantiationAwareBeanPostProcessor的BeanPostProcessor调用它，返回代理Bean
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                // 执行该方法最终会从代理工厂中获取一个代理类
+                Object result = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).postProcessBeforeInstantiation(beanClass, beanName);
+                if (null != result) return result;
+            }
+        }
+        return null;
     }
 
     /**
