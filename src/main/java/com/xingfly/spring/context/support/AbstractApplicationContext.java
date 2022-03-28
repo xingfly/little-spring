@@ -123,6 +123,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
      * @param beanFactory bean工厂
      */
     private void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+        // getBeansOfType() 获取所有的BeanFactoryPostProcessor,并注册Bean到BeanFactory中
         Map<String, BeanFactoryPostProcessor> beanFactoryPostProcessorMap = beanFactory.getBeansOfType(BeanFactoryPostProcessor.class);
         for (BeanFactoryPostProcessor beanFactoryPostProcessor : beanFactoryPostProcessorMap.values()) {
             beanFactoryPostProcessor.postProcessBeanFactory(beanFactory);
