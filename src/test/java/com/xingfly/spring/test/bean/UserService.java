@@ -1,5 +1,7 @@
 package com.xingfly.spring.test.bean;
 
+import com.xingfly.spring.beans.factory.annotation.Autowired;
+import com.xingfly.spring.beans.factory.annotation.Value;
 import com.xingfly.spring.stereotype.Component;
 
 import java.util.Random;
@@ -7,7 +9,11 @@ import java.util.Random;
 @Component("userService")
 public class UserService implements IUserService {
 
+    @Value("${token}")
     private String token;
+
+    @Autowired
+    private UserDao userDao;
 
     public String queryUserInfo() {
         try {
@@ -15,7 +21,7 @@ public class UserService implements IUserService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return "XF，1，成都";
+        return userDao.queryUserName("10001") + "，" + token;
     }
 
     public String register(String userName) {

@@ -1,6 +1,7 @@
 package com.xingfly.spring.context.annotation;
 
 import cn.hutool.core.util.StrUtil;
+import com.xingfly.spring.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import com.xingfly.spring.beans.factory.config.BeanDefinition;
 import com.xingfly.spring.beans.factory.support.BeanDefinitionRegistry;
 import com.xingfly.spring.stereotype.Component;
@@ -41,6 +42,8 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
                 registry.registerBeanDefinition(determineBeanName(beanDefinition), beanDefinition);
             }
         }
+        registry.registerBeanDefinition("com.xingfly.spring.beans.factory.annotation.internalAutowiredAnnotationProcessor", new BeanDefinition(AutowiredAnnotationBeanPostProcessor.class));
+
     }
 
     /**
