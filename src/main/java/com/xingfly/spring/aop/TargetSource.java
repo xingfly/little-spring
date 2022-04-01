@@ -1,5 +1,7 @@
 package com.xingfly.spring.aop;
 
+import com.xingfly.spring.util.ClassUtil;
+
 /**
  * 目标对象 - TargetSource
  *
@@ -14,7 +16,9 @@ public class TargetSource {
     }
 
     public Class<?>[] getTargetClass() {
-        return this.target.getClass().getInterfaces();
+        Class<?> clazz = this.target.getClass();
+        clazz = ClassUtil.isCglibProxyClass(clazz) ? clazz.getSuperclass() : clazz;
+        return clazz.getInterfaces();
     }
 
     public Object getTarget() {

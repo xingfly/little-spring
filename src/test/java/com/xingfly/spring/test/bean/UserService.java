@@ -45,4 +45,12 @@ public class UserService implements IUserService {
     public void setToken(String token) {
         this.token = token;
     }
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
 }

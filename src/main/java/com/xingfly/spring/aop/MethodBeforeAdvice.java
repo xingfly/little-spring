@@ -18,5 +18,6 @@ public interface MethodBeforeAdvice extends BeforeAdvice {
      * @param args   参数
      * @param target 目标对象
      */
-    void before(Method method, Object[] args, Object target);
+    void before(Method method, Object[] args, Object target) throws Throwable;
+
 }

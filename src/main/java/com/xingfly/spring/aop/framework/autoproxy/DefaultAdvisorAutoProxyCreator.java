@@ -36,44 +36,29 @@ public class DefaultAdvisorAutoProxyCreator implements InstantiationAwareBeanPos
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        if (isInfrastructureClass(bean.getClass())) {
+            return bean;
+        }
+        Collection<AspectJExpressionPointcutAdvisor> advisors = beanFactory.getBeansOfType(AspectJExpressionPointcutAdvisor.class).values();
+        for (AspectJExpressionPointcutAdvisor advisor : advisors) {
+            ClassFilter classFilter = advisor.getPointcut().getClassFilter();
+            if (!classFilter.matches(bean.getClass())) {
+                continue;
+            }
+            AdvisedSupport advisedSupport = new AdvisedSupport();
+            TargetSource targetSource = new TargetSource(bean);
+            advisedSupport.setTargetSource(targetSource);
+            advisedSupport.setMethodInterceptor((MethodInterceptor) advisor.getAdvice());
+            advisedSupport.setMethodMatcher(advisor.getPointcut().getMethodMatcher());
+            advisedSupport.setProxyTargetClass(false);
+            // 返回代理对象
+            return new ProxyFactory(advisedSupport).getProxy();
+        }
         return bean;
     }
 
     @Override
     public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
-        // 如果是Advice 或 Pointcut 或 Advisor的父类，则不进行代理
-        if (isInfrastructureClass(beanClass)) {
-            return null;
-        }
-        // 获取所有切面支持对象（包含了切点、表达式、拦截方法）对象
-        Collection<AspectJExpressionPointcutAdvisor> advisors = beanFactory.getBeansOfType(AspectJExpressionPointcutAdvisor.class).values();
-        // AspectJExpressionPointcutAdvisor类的配置在XML中，会在createBean时创建
-        for (AspectJExpressionPointcutAdvisor advisor : advisors) {
-            // 从顾问的切面中获取类过滤器
-            ClassFilter classFilter = advisor.getPointcut().getClassFilter();
-            // 类不匹配的跳过
-            if (!classFilter.matches(beanClass)) {
-                continue;
-            }
-            // 创建切面通知
-            AdvisedSupport advisedSupport = new AdvisedSupport();
-            // 创建目标对象包装
-            TargetSource targetSource = null;
-            try {
-                targetSource = new TargetSource(beanClass.getDeclaredConstructor().newInstance());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            advisedSupport.setTargetSource(targetSource);
-            // 将增强方法从切面支持对象中取出，放入到切面通知中
-            advisedSupport.setMethodInterceptor((MethodInterceptor) advisor.getAdvice());
-            // 将方法匹配起从切面支持对象的切点中取出，放入到切面通知中
-            advisedSupport.setMethodMatcher(advisor.getPointcut().getMethodMatcher());
-            // false-JDK动态代理、true-CGlib动态代理
-            advisedSupport.setProxyTargetClass(false);
-            // 从代理工厂获取代理（代理类中会被织入增强方法）
-            return new ProxyFactory(advisedSupport).getProxy();
-        }
         return null;
     }
 
