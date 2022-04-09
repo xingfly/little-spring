@@ -2,7 +2,9 @@ package com.xingfly.spring.test;
 
 
 import com.xingfly.spring.context.support.ClassPathXmlApplicationContext;
-import com.xingfly.spring.test.bean.IUserService;
+import com.xingfly.spring.test.bean.Husband;
+import com.xingfly.spring.test.bean.Wife;
+import org.junit.Test;
 
 /**
  * ScanTest
@@ -12,11 +14,13 @@ import com.xingfly.spring.test.bean.IUserService;
  */
 public class ApiTest {
 
-    @org.junit.Test
-    public void test_scan() {
+    @Test
+    public void test_circular() {
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
-        IUserService userService = applicationContext.getBean("userService", IUserService.class);
-        System.out.println("测试结果：" + userService.queryUserInfo());
+        Husband husband = applicationContext.getBean("husband", Husband.class);
+        Wife wife = applicationContext.getBean("wife", Wife.class);
+        System.out.println("老公的媳妇：" + husband.queryWife());
+        System.out.println("媳妇的老公：" + wife.queryHusband());
     }
 
 

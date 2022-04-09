@@ -41,16 +41,10 @@ public class Cglib2AopProxy implements AopProxy {
 
         @Override
         public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-            // cglib方法执行 包装对象
             CglibMethodInvocation methodInvocation = new CglibMethodInvocation(advised.getTargetSource().getTarget(), method, objects, methodProxy);
-            // 判断切面通知 判断方法是否匹配
-            if (advised.getMethodMatcher().matches(method, advised.getTargetSource().getClass())) {
-                // 调用拦截器的invoke方法
-                org.aopalliance.intercept.MethodInterceptor methodInterceptor = advised.getMethodInterceptor();
-                // 调用MethodBeforeAdviceInterceptor中的invoke方法，该类会调用MethodBeforeAdvice的before方法，然后调用代理对象的实际方法，完成前置增强
-                return methodInterceptor.invoke(methodInvocation);
+            if (advised.getMethodMatcher().matches(method, advised.getTargetSource().getTarget().getClass())) {
+                return advised.getMethodInterceptor().invoke(methodInvocation);
             }
-            // 匹配不上调用代理方法执行
             return methodInvocation.proceed();
         }
     }

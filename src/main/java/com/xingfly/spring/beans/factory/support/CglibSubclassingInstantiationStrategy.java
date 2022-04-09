@@ -26,11 +26,7 @@ public class CglibSubclassingInstantiationStrategy implements InstantiationStrat
                 return super.hashCode();
             }
         });
-        // 构造函数为空直接创建
-        if (null == ctor) {
-            return enhancer.create();
-        }
-        // 构造函数不为空，通过传递构造函数参数创建
+        if (null == ctor) return enhancer.create();
         return enhancer.create(ctor.getParameterTypes(), args);
     }
 }
